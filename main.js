@@ -8,6 +8,8 @@ const pathCharacter = '*';
 //starting positions
 let x = 0;
 let y = 0;
+let globalHeight;
+let globalWidth;
 let gameState = '';
 
 ranNumGen = (max) => {
@@ -29,27 +31,37 @@ class Field {
     movePlayer = direction => {
         direction = direction.toLowerCase();
         if(direction === 'd' || direction === 'down') {
-            y += 1;
-            this.hazardCheck(myField.field[y][x]);
-            myField.field[y][x] = '*';
+            x += 1;
+            this.hazardCheck(myField.field[x][y]);
+            myField.field[x][y] = '*';
             myField.print();
         } else if(direction === 'u' || direction === 'up') {
-            y -= 1;
-            this.hazardCheck(myField.field[y][x]);
-            myField.field[y][x] = '*';
+            x -= 1;
+            this.hazardCheck(myField.field[x][y]);
+            myField.field[x][y] = '*';
             myField.print();
         } else if(direction === 'r' || direction === 'right') {
-            x += 1;
-            this.hazardCheck(myField.field[y][x]);
-            myField.field[y][x] = '*';
+            y += 1;
+            this.hazardCheck(myField.field[x][y]);
+            myField.field[x][y] = '*';
             myField.print();
         } else if(direction === 'l' || direction === 'left') {
-            x -= 1;
-            this.hazardCheck(myField.field[y][x]);
-            myField.field[y][x] = '*';
+            y -= 1;
+            this.hazardCheck(myField.field[x][y]);
+            myField.field[x][y] = '*';
             myField.print();
         } else {
             console.log('Please use the following commands: up, down, left, right');
+        }
+     };
+
+     //hard mode feature, 1/3 chance of creating an extra hole each turn
+     digHole = () => {
+        const dice = ranNumGen(3);
+        if(dice === 2) {
+        let ranHeight = ranNumGen(globalHeight);
+        let ranWidth = ranNumGen(globalWidth);
+        myField.field[ranWidth][ranHeight] = 'O';
         }
      };
 
@@ -64,7 +76,8 @@ class Field {
             console.log('Yay! You got your hat back!');
             gameState = 'gameover';  
         } else if(coor === '░') {
-            //ignores normal path elements
+            //ignores normal path elements and 1/3 chance of creating new hole
+            this.digHole();
         } else {
             //catches players going out of bounds
             console.log('Oh no! You fell off the map.');
@@ -72,9 +85,9 @@ class Field {
         }
      };
 
-     
-
      static generateField = (height, width, holesPercentage) => {
+        globalHeight = height;
+        globalWidth = width;
         let newField = Array(height);
         for(let i = 0; i < height; i++) {
             newField[i] = Array(width).fill(fieldCharacter);
@@ -114,13 +127,12 @@ class Field {
         //console.log(newField);
         return newField;
      };
+    };
 
-};
-
-
-
-let myField = new Field(Field.generateField(5,5,50));
+let myField = new Field(Field.generateField(5,5,40));
 myField.print();
+let h = ranNumGen(globalHeight);
+let w = ranNumGen(globalWidth);
 
 while(gameState != 'gameover') {
   const direction = prompt('Which direction will you move in?');
