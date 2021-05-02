@@ -75,7 +75,7 @@ class Field {
             //catches players reaching the hat
             console.log('Yay! You got your hat back!');
             gameState = 'gameover';  
-        } else if(coor === '░') {
+        } else if(coor === '░' || coor === '*') {
             //ignores normal path elements and 1/3 chance of creating new hole
             this.digHole();
         } else {
