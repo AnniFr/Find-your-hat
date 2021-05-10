@@ -26,7 +26,7 @@ class Field {
     print() {
         term.clear();        
         for(let i = 0; i < this.field.length; i++) {
-            console.log(this.field[i].join(' '))
+            console.log(this.field[i].join(' '));
         }    
     };
 
@@ -71,12 +71,15 @@ class Field {
      hazardCheck = (coor) => {
         if(coor === 'O') {
             //catches players falling into the hole
+            this.surprise();
             term.red('Oh no! You fell in a hole. Game over!');
             gameState = 'gameover';
             process.exit(0);
         } else if(coor === '^') {
             //catches players reaching the hat
+            this.surprise();
             term.green('Yay! You got your hat back! You win!');
+            term.yellow(' <').white(':)');
             gameState = 'gameover';
             process.exit(0);  
         } else if(coor === '░' || coor === '*') {
@@ -84,11 +87,18 @@ class Field {
             this.digHole();
         } else {
             //catches players going out of bounds
+            this.surprise();
             term.red('Oh no! You fell off the map. Game over.');
             gameState = 'gameover';
             process.exit(0);
         }
      };
+
+     //turns location into !
+     surprise = () => {
+        myField.field[x][y] = '!';
+        myField.print();
+     }
 
      static generateField = (height, width, holesPercentage) => {
         globalHeight = height;
@@ -136,10 +146,12 @@ class Field {
 
 let myField = new Field(Field.generateField(5,5,40));
 myField.print();
+console.log('');
 let h = ranNumGen(globalHeight);
 let w = ranNumGen(globalWidth);
 
 while(gameState != 'gameover') {
+    
   const direction = prompt('Which direction will you move in?');
   myField.movePlayer(direction);
 }
