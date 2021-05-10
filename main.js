@@ -1,4 +1,5 @@
 const prompt = require('prompt-sync')({sigint: true});
+const term = require('terminal-kit').terminal;
 
 const hat = '^';
 const hole = 'O';
@@ -23,6 +24,7 @@ class Field {
     }
 
     print() {
+        term.clear();        
         for(let i = 0; i < this.field.length; i++) {
             console.log(this.field[i].join(' '))
         }    
@@ -69,19 +71,22 @@ class Field {
      hazardCheck = (coor) => {
         if(coor === 'O') {
             //catches players falling into the hole
-            console.log('Oh no! You fell in a hole.');
+            term.red('Oh no! You fell in a hole. Game over!');
             gameState = 'gameover';
+            process.exit(0);
         } else if(coor === '^') {
             //catches players reaching the hat
-            console.log('Yay! You got your hat back!');
-            gameState = 'gameover';  
+            term.green('Yay! You got your hat back! You win!');
+            gameState = 'gameover';
+            process.exit(0);  
         } else if(coor === '░' || coor === '*') {
             //ignores normal path elements and 1/3 chance of creating new hole
             this.digHole();
         } else {
             //catches players going out of bounds
-            console.log('Oh no! You fell off the map.');
+            term.red('Oh no! You fell off the map. Game over.');
             gameState = 'gameover';
+            process.exit(0);
         }
      };
 
